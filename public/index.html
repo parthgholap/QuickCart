@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QuickCart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+</head>
+
+<style>
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    body {
+        background-color: rgb(250, 245, 245);
+    }
+
+    .zoom-animation {
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .zoom-animation:hover {
+        transform: scale(1.1);
+        box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.358);
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const items = document.querySelectorAll(".product-item");
+
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                const title = item.querySelector('p')?.innerText?.trim();
+                const img = item.querySelector('img');
+                const image = img?.getAttribute("src");
+
+                const productDetails = {
+                    image: image,
+                    title: title,
+                    description: `The ${title} is one of the most reliable and stylish products available.
+Designed with quality in mind and crafted for long-lasting performance.
+Enjoy sleek design, high durability, and premium user satisfaction.
+Perfect for daily use, gifting, or professional needs.
+Made with superior materials to ensure the best experience.
+Don’t miss out on this top-rated and highly recommended product.`,
+                    price: Math.floor(Math.random() * 1000 + 500),
+                    rating: (Math.random() * 2 + 3).toFixed(1)
+                };
+
+                // Get existing cart from localStorage or empty array
+                let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                cart.push(productDetails);
+                localStorage.setItem("cart", JSON.stringify(cart));
+
+                const query = encodeURIComponent(JSON.stringify(productDetails));
+                window.location.href = `product.html?product=${query}`;
+
+
+            });
+        });
+    });
+
+
+
+
+</script>
+
+
+
+
+
+<body class="font-sans">
+
+
+    <!-- Header Section -->
+    <header class="bg-cyan-200 p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- Logo -->
+        <div class="flex items-center gap-2 text-xl font-semibold">
+            <!-- <i class="fas fa-shopping-cart text-red-500 text-2xl"></i> -->
+            <img src="images/image.png" alt="" class="w-10 h-10">
+            <span>QuickCart</span>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="w-full md:w-1/2 flex">
+            <input type="text" placeholder="Search for Products"
+                class="w-full px-4 py-2 rounded-l-md border border-gray-300 focus:outline-none" />
+            <button class="bg-orange-500 text-white px-4 rounded-r-md"><i class="fas fa-search"></i></button>
+        </div>
+
+        <!-- Icons -->
+        <!-- Icons (DO NOT add 'product-item' class here) -->
+        <div class="flex items-center gap-6 text-center text-sm">
+            <div onclick="window.location.href='wishlist.html'" class="cursor-pointer text-center">
+                <i class="far fa-heart text-xl"></i>
+                <p>Wishlist</p>
+            </div>
+            <div onclick="window.location.href='profile.html'" class="cursor-pointer text-center">
+                <i class="far fa-user text-xl"></i>
+                <p>Profile</p>
+            </div>
+            <div onclick="window.location.href='cart.html'" class="cursor-pointer text-center">
+                <i class="fas fa-shopping-cart text-xl"></i>
+                <p>Cart</p>
+            </div>
+
+        </div>
+
+
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav
+        class="bg-[#0c0032] text-white px-4 py-3 flex flex-wrap gap-6 items-center justify-center md:justify-start text-sm md:text-base">
+        <div class="flex items-center gap-2 cursor-pointer">
+            <i class="fas fa-bars"></i>
+            <span>All</span>
+        </div>
+        <span class="cursor-pointer hover:underline">Men</span>
+        <span class="cursor-pointer hover:underline">Women</span>
+        <span class="cursor-pointer hover:underline">Kids</span>
+        <span class="cursor-pointer hover:underline">Buety & Health</span>
+        <span class="cursor-pointer hover:underline">Bags & Footware</span>
+    </nav>
+
+    <!-- Image Slider -->
+    <section class="w-full max-w-full mx-auto  relative" style="height: 330px;">
+        <div id="slider" class="overflow-hidden rounded-lg relative shadow-lg h-full">
+            <div id="slides" class="flex transition-transform duration-500 ease-in-out h-full">
+                <!-- Replace with your images, make sure images are at least 80px tall -->
+                <img src="images/slide1.png" alt="Slide 1" class="flex-shrink-0 w-full h-full object-cover" />
+                <img src="images/slide2.jpeg" alt="Slide 2" class="flex-shrink-0 w-full h-full object-cover" />
+                <img src="images/slide3.jpg" alt="Slide 3" class="flex-shrink-0 w-full h-full object-cover" />
+            </div>
+
+            <!-- Prev / Next Buttons -->
+            <button id="prevBtn"
+                class="absolute top-1/2 left-3 -translate-y-1/2 bg-indigo-800 text-white rounded-full p-2 hover:bg-indigo-700 focus:outline-none shadow-lg">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button id="nextBtn"
+                class="absolute top-1/2 right-3 -translate-y-1/2 bg-indigo-600 text-white rounded-full p-2 hover:bg-indigo-700 focus:outline-none shadow-lg">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </section>
+
+
+    <!-- SECTION 1 -->
+    <div class="px-4 sm:px-8 lg:px-16 py-9">
+        <div class="bg-white shadow-lg rounded-xl p-6 w-full">
+            <h2 class="text-2xl font-bold text-left text-gray-900">Trending Electronics</h2>
+
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mt-4">
+                <!-- Item 1 -->
+                <div class="flex product-item flex-col items-center">
+                    <img src="images/airpods.jpg" alt="Apple Smart Watch"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Apple iPad</p>
+                </div>
+
+
+                <!-- Item 2 -->
+                <div class="flex product-item flex-col items-center">
+                    <img src="images/laptop.jpg" alt="Apple Smart Watch"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Apple Smart Watch</p>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="flex product-item flex-col items-center">
+                    <img src="images/refriherator.jpg" alt="Rockstar AC"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Rockstar AC</p>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="flex product-item flex-col items-center">
+                    <img src="images/image.png" alt="Zbronix TV"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Zbronix TV</p>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="flex product-item flex-col items-center">
+                    <img src="images/watch.jpg" alt="Canon Camera"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Canon Camera</p>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="flex product-item flex-col items-center">
+                    <img src="images/watch2.jpg" alt="Canon Camera"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Canon Camera</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- SECTION 2 -->
+
+    <!-- SECTION 2 -->
+    <div class="px-4 sm:px-8 lg:px-16 pt-0 pb-9">
+        <div class="bg-white shadow-lg rounded-xl p-6 w-full">
+            <h2 class="text-2xl font-bold text-left text-gray-900">Trending Fashion</h2>
+
+            <div class="flex overflow-x-auto space-x-6 mt-3  px-2">
+
+                <!-- Item 1 -->
+                <div class="flex-shrink-0 w-64 flex flex-col product-item items-center">
+                    <img src="images/clothesmen.jpg" alt="Western Shirt"
+                        class="w-60 h-60 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-2 text-lg font-semibold text-gray-800 text-center whitespace-normal break-words">
+                        Western Shirt
+                    </p>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="flex-shrink-0 w-64 flex flex-col product-item items-center">
+                    <img src="images/laptop.jpg" alt="Modern Top"
+                        class="w-60 h-60 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-2 text-lg font-semibold text-gray-800 text-center whitespace-normal break-words">
+                        Modern Top
+                    </p>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="flex-shrink-0 w-64 flex flex-col product-item items-center">
+                    <img src="images/clotheschild.jpg" alt="Kurta for Kids"
+                        class="w-60 h-60 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-2 text-lg font-semibold text-gray-800 text-center whitespace-normal break-words">
+                        Kurta for Kids
+                    </p>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="flex-shrink-0 w-64 flex flex-col product-item items-center">
+                    <img src="images/image.png" alt="Ladies Top"
+                        class="w-60 h-60 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-2 text-lg font-semibold text-gray-800 text-center whitespace-normal break-words">
+                        Ladies Top
+                    </p>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="flex-shrink-0 w-64 flex flex-col product-item items-center">
+                    <img src="images/clothesmen.jpg" alt="Kurta for Men"
+                        class="w-60 h-60 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-2 text-lg font-semibold text-gray-800 text-center whitespace-normal break-words">
+                        Kurta for Men
+                    </p>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="flex-shrink-0 w-64 flex flex-col product-item items-center">
+                    <img src="images/watch2.jpg" alt="Canon Camera"
+                        class="w-60 h-60 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-2 text-lg font-semibold text-gray-800 text-center whitespace-normal break-words">
+                        Canon Camera
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- SECTION 3 -->
+
+    <!-- SECTION 3 -->
+    <!-- Trending Foods Section -->
+    <div class="px-4 sm:px-8 lg:px-16 pt-0 pb-9">
+        <div class="bg-white shadow-lg rounded-xl p-6 w-full">
+
+            <!-- Title -->
+            <h2 class="text-2xl font-bold text-left text-gray-900">
+                Trending Foods
+            </h2>
+
+            <!-- Responsive Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+
+                <!-- Item 1 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/apple copy.jpg" alt="Apple"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Apple</p>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/kiwi.jpg" alt="Kiwi" class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Kiwi</p>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/almond.jpg" alt="Almond"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Almond</p>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/pistachio.jpg" alt="Pistachio"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Pistachio</p>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/mango.jpg" alt="Mango"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Mango</p>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/watch2.jpg" alt="Canon Camera"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Canon Camera</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- SECTION 4 -->
+    <!-- Trending Deals Section -->
+    <div class="px-4 sm:px-8 lg:px-16 pt-0 pb-9">
+        <div class="bg-white shadow-lg rounded-xl p-6 w-full">
+
+            <!-- Title -->
+            <h2 class="text-2xl font-bold text-left text-gray-900">
+                Top Deals
+            </h2>
+
+            <!-- Responsive Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+
+                <!-- Item 1 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/refrigerator.webp" alt="Apple"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Refrigerator</p>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/bed.jpg" alt="Kiwi" class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Bed</p>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/cycle.jpg" alt="Almond"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Sports Cycle</p>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/dianingtable.jpg" alt="Pistachio"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Dining Table</p>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/luggessets.jpg" alt="Mango"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Luggage Sets</p>
+                </div>
+
+                <!-- Item 6 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/watch2.jpg" alt="Canon Camera"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Canon Camera</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- SECTION 5 -->
+    <!-- Trending Deals Section -->
+    <div class="px-4 sm:px-8 lg:px-16 pt-0 pb-9">
+        <div class="bg-white shadow-lg rounded-xl p-6 w-full">
+
+            <!-- Title -->
+            <h2 class="text-2xl font-bold text-left text-gray-900">
+                Best Seller
+            </h2>
+
+            <!-- Responsive Grid -->
+            <div class="grid grid-cols-2 mt-3 :grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+
+                <!-- Item 1 -->
+                <!-- Example product item -->
+                <div class="product-item flex flex-col items-center cursor-pointer">
+                    <img src="images/shoes.jpg" alt="Modern Shoes"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Modern Shoes</p>
+                </div>
+
+
+
+                <!-- Item 3 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/airpods.jpg" alt="Almond"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Apple AirPods</p>
+                </div>
+
+                <!-- Item 4 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/facewash.jpg" alt="Pistachio"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Aloevera Facewash</p>
+                </div>
+
+                <!-- Item 5 -->
+                <div class="flex flex-col product-item items-center">
+                    <img src="images/watch.jpg" alt="Mango"
+                        class="w-64 h-64 object-contain rounded-xl zoom-animation" />
+                    <p class="mt-1 text-lg font-semibold text-gray-800 text-center">Watch For Ladies</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- FOOTER  -->
+
+    <!-- <footer>
+
+        <div
+            class="bg-[#0c0032] text-white px-4 py-3 flex flex-wrap gap-6 items-center justify-center text-sm md:text-base mt-1 text-lg font-semibold text-gray-800 text-center">
+            Back to Top
+        </div>
+
+    </footer> -->
+
+
+    <!-- Footer -->
+    <footer class="bg-[#0A0133] text-white">
+        <!-- Back to Top -->
+        <div class="text-center py-2 bg-[#2D1B70]">
+            <a href="#" class="text-lg font-semibold hover:underline">Back to Top</a>
+        </div>
+
+        <!-- Main Footer Content -->
+        <div class="max-w-7xl mx-auto py-8 px-4 flex flex-col md:flex-row md:justify-between items-center gap-6">
+
+            <!-- Logo + Site Name -->
+            <div class="flex flex-col items-center md:items-start">
+                <img src="images/image.png" alt="QuickCart Logo" class="w-24 h-24 object-contain mb-2" />
+                <h2 class="text-2xl font-semibold">QuickCart</h2>
+            </div>
+
+            <!-- Social + Subscribe -->
+            <div class="flex flex-col gap-4 items-center">
+                <!-- Social -->
+                <div>
+                    <h3 class="text-xl font-medium text-center">Get In Touch</h3>
+                    <div class="flex gap-4 mt-2">
+                        <a href="#"><img src="images/facebook.png" alt="Facebook"
+                                class="w-10 h-10 rounded-full bg-white p-1" /></a>
+                        <a href="#"><img src="images/twitter.png" alt="Twitter"
+                                class="w-10 h-10 rounded-full bg-white p-1" /></a>
+                        <a href="#"><img src="images/google.png" alt="Google"
+                                class="w-10 h-10 rounded-full bg-white p-1" /></a>
+                    </div>
+                </div>
+
+                <!-- Subscribe -->
+                <div>
+                    <h3 class="text-xl font-medium text-center">Subscribe</h3>
+                    <div class="flex mt-2">
+                        <input type="email" placeholder="Enter Emails Address"
+                            class="rounded-full px-4 py-2 text-black w-72 outline-none" />
+                        <button class="bg-white text-black rounded-full px-6 ml-2 hover:bg-gray-300">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Links -->
+        <div class="text-center text-sm py-2">
+            <a href="#" class="mx-2 hover:underline">Contact Us</a>
+            <a href="#" class="mx-2 hover:underline">Disclaimer</a>
+            <a href="#" class="mx-2 hover:underline">About Us</a>
+        </div>
+
+        <!-- Divider -->
+        <hr class="border-t border-white mx-4" />
+
+        <!-- Copyright -->
+        <div class="text-center text-sm py-4">
+            © 2024 QuickCart, All Rights Reserved
+        </div>
+    </footer>
+
+
+
+
+    <script>
+
+        const slides = document.getElementById('slides');
+        const totalSlides = slides.children.length;
+        let currentIndex = 0;
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateSlider() {
+            slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+            updateSlider();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            updateSlider();
+        });
+
+        // Auto slide every 5 seconds
+        setInterval(() => {
+            currentIndex = (currentIndex + 1) % totalSlides;
+            updateSlider();
+        }, 2000);
+    </script>
+
+</body>
+
+</html>

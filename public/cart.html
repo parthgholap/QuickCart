@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Cart - QuickCart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-300 text-gray-800 font-sans">
+  <!-- ✅ Remove the duplicate outer div -->
+  <div class="max-w-4xl mx-auto mt-10 bg-white p-6 rounded-lg shadow-lg">
+    <div class="flex justify-center mb-4 gap-4">
+      <img src="images/image.png" class="w-14 h-14" alt="QuickCart Logo">
+      <h2 class="text-3xl font-bold mb-6 text-center text-indigo-700">Your Cart</h2>
+    </div>
+
+    <div id="cartItems" class="space-y-6"></div>
+    <div id="emptyCart" class="text-center text-gray-500 text-lg hidden">Your cart is empty.</div>
+  </div>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const cartContainer = document.getElementById("cartItems");
+    const emptyCartMsg = document.getElementById("emptyCart");
+
+    if (cart.length === 0) {
+      emptyCartMsg.classList.remove("hidden");
+    } else {
+      cart.forEach(product => {
+        const div = document.createElement("div");
+        div.className = "flex items-center justify-between border-b pb-4 cursor-pointer";
+
+        div.innerHTML = `
+        <div class="flex items-center gap-6 bg-gray-200">
+          <img src="${product.image}" class="w-24 h-24 ml-3 object-contain rounded-md border" alt="${product.title}" />
+          <div>
+            <h3 class="text-xl mt-4 font-semibold">${product.title}</h3>
+        <p class="text-gray-600">${product.description.slice(0, 100)}...</p>
+        <p class="text-green-600 font-bold mt-2">₹${product.price}</p>
+        <p class="text-yellow-500 text-sm">${product.rating} ⭐</p>
+            <button class="bg-red-500 text-white mb-2 px-4 py-2 rounded hover:bg-red-600 mt-2 remove-btn" data-title="${product.title}">
+              Remove
+            </button>
+          </div>
+        </div>
+      `;
+        // Add click event to redirect to product page
+        div.addEventListener('click', (event) => {
+          // Prevent Remove button from triggering redirection
+          if (!event.target.classList.contains('remove-btn')) {
+            const encoded = encodeURIComponent(JSON.stringify(product));
+            window.location.href = `product.html?product=${encoded}`;
+          }
+        });
+
+        cartContainer.appendChild(div);
+      });
+      // Attach remove handlers
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+          const title = this.getAttribute('data-title');
+          cart = cart.filter(item => item.title !== title);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          location.reload();
+        });
+      });
+    }
+  </script>
+</body>

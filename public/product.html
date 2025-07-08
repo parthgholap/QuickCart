@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product Details</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+</head>
+
+<body class="bg-gray-100 p-10">
+  <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+
+    <!-- Wishlist Heart Icon -->
+    <div class="flex justify-end mb-4">
+      <button id="wishlistBtn" title="Add to Wishlist">
+        <!-- Outline Heart (default) -->
+        <svg id="heartOutline" xmlns="http://www.w3.org/2000/svg"
+          class="w-8 h-8 text-red-500 hover:scale-110 transition transform duration-300" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+
+        <!-- Filled Heart (hidden by default) -->
+        <svg id="heartFilled" xmlns="http://www.w3.org/2000/svg"
+          class="w-8 h-8 text-red-500 hover:scale-110 transition transform duration-300 hidden" fill="currentColor"
+          viewBox="0 0 24 24">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 
+        4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 
+        14.76 3 16.5 3 19.58 3 22 5.42 
+        22 8.5c0 3.78-3.4 6.86-8.55 
+        11.54L12 21.35z" />
+        </svg>
+      </button>
+    </div>
+
+
+
+    <img id="productImage" src="" alt="Product" class="w-64 h-64 object-contain mx-auto">
+    <h1 id="productTitle" class="text-2xl font-bold my-2"></h1>
+    <p id="productDesc" class="text-gray-600 mb-2"></p>
+    <p id="productPrice" class="text-green-700 text-lg font-bold"></p>
+    <p id="productRating" class="text-yellow-500 mb-4"></p>
+
+    <button id="addToCartBtn" class="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600">Add to
+      Cart</button>
+    <button id="buyBtn" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+      Buy
+    </button>
+  </div>
+
+
+
+  <style>
+    @keyframes autoZoom {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .zoom-animation {
+      animation: autoZoom 2s ease-in-out infinite;
+    }
+  </style>
+
+  <script>
+    let product = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const productData = params.get("product");
+
+      if (productData) {
+        product = JSON.parse(decodeURIComponent(productData));
+
+        document.getElementById("productImage").src = product.image;
+        document.getElementById("productTitle").innerText = product.title;
+        document.getElementById("productDesc").innerText = product.description;
+        document.getElementById("productPrice").innerText = `₹${product.price}`;
+        document.getElementById("productRating").innerText = `${product.rating} ⭐`;
+
+        document.getElementById("addToCartBtn").addEventListener("click", () => {
+          let cart = JSON.parse(localStorage.getItem("cart")) || [];
+          const exists = cart.find(p => p.title === product.title && p.image === product.image);
+          if (exists) {
+            alert("✅ Already in cart!");
+            return;
+          }
+          cart.push(product);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          alert("✅ Product added to cart!");
+        });
+
+        // 💖 Wishlist logic (moved inside too)
+        const wishlistBtn = document.getElementById("wishlistBtn");
+        const heartOutline = document.getElementById("heartOutline");
+        const heartFilled = document.getElementById("heartFilled");
+
+        let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        const inWishlist = wishlist.find(p => p.title === product.title && p.image === product.image);
+
+        if (inWishlist) {
+          heartFilled.classList.remove("hidden");
+          heartOutline.classList.add("hidden");
+        }
+
+        wishlistBtn.addEventListener("click", () => {
+          wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+          const index = wishlist.findIndex(p => p.title === product.title && p.image === product.image);
+
+          if (index !== -1) {
+            wishlist.splice(index, 1);
+            heartFilled.classList.add("hidden");
+            heartOutline.classList.remove("hidden");
+            alert("💔 Removed from wishlist");
+          } else {
+            wishlist.push(product);
+            heartFilled.classList.remove("hidden");
+            heartOutline.classList.add("hidden");
+            alert("❤️ Added to wishlist");
+          }
+
+          localStorage.setItem("wishlist", JSON.stringify(wishlist));
+        });
+
+        // ✅ Razorpay Buy Button (now works)
+        document.getElementById("buyBtn").addEventListener("click", () => {
+          const options = {
+            key: "rzp_test_FOUsCeLh8yxItn", // ✅ Your test key
+            amount: product.price * 100,
+            currency: "INR",
+            name: product.title,
+            description: "QuickCart purchase",
+            image: product.image,
+            handler: function (response) {
+              alert("✅ Payment successful!\nPayment ID: " + response.razorpay_payment_id);
+            },
+            prefill: {
+              name: "Test Buyer",
+              email: "buyer@example.com",
+              contact: "9000090000"
+            },
+            theme: {
+              color: "#38a169"
+            }
+          };
+
+          const rzp = new Razorpay(options);
+          rzp.open();
+        });
+      }
+    });
+
+
+  </script>
+
+</body>
+
+</html>

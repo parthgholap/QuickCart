@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+
+    <!-- PROFILE SECTION -->
+    <div id="profileSection"
+        class="min-h-screen flex items-center justify-center bg-gradient-to-tr from-indigo-200 via-purple-200 to-pink-100 px-6 py-14">
+        <div class="bg-white shadow-2xl rounded-3xl p-10 max-w-xl w-full animate__animated animate__fadeInUpBig">
+
+            <!-- Profile Image -->
+            <div onclick="handleProfileClick()" class="cursor-pointer relative group w-40 h-40 mx-auto">
+                <img id="profileImage" src="https://i.pravatar.cc/300?img=60"
+                    class="w-full h-full rounded-full border-4 border-indigo-600 shadow-xl transition-transform transform group-hover:scale-110 duration-300" />
+                <div
+                    class="absolute inset-0 bg-black bg-opacity-20 rounded-full hidden group-hover:flex items-center justify-center text-white font-semibold text-lg animate__animated animate__fadeIn">
+                    Edit
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <h2 id="profileName" class="text-3xl font-extrabold mt-6 text-gray-800 text-center">Tap image to Login</h2>
+            <p id="profileEmail" class="text-base text-gray-600 text-center mt-1 mb-6"></p>
+
+            <!-- Stats -->
+            <div class="flex justify-around text-center py-5 bg-gray-100 rounded-xl mb-6 shadow-inner">
+                <div>
+                    <p class="text-xl font-bold text-indigo-700">-</p>
+                    <p class="text-sm text-gray-600">Orders</p>
+                </div>
+                <div>
+                    <p class="text-xl font-bold text-indigo-700">-</p>
+                    <p class="text-sm text-gray-600">Wishlist</p>
+                </div>
+                <div>
+                    <p class="text-xl font-bold text-indigo-700">-</p>
+                    <p class="text-sm text-gray-600">Cart</p>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-col space-y-4">
+                <button onclick="handleProfileClick()"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl shadow-md transform hover:scale-105 transition-all duration-300">
+                    Update Profile
+                </button>
+                <button onclick="logoutUser()"
+                    class="bg-red-500 hover:bg-red-600 text-white py-3 rounded-xl shadow-md transform hover:scale-105 transition-all duration-300 hidden"
+                    id="logoutBtn">
+                    Logout
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div id="authModal" class="fixed inset-0 hidden bg-black bg-opacity-60 z-50 flex items-center justify-center">
+        <div class="relative bg-white p-8 rounded-2xl w-96 shadow-2xl animate__animated animate__zoomIn">
+
+            <!-- ❌ Close Button -->
+            <button onclick="closeModal()"
+                class="absolute top-3 right-3 text-gray-600 hover:text-red-500 text-2xl font-bold focus:outline-none transition-transform transform hover:scale-110">
+                &times;
+            </button>
+
+            <h2 class="text-2xl font-bold text-center mb-5">📝 Register / Update Profile</h2>
+            <input id="nameInput" type="text" placeholder="Full Name"
+                class="w-full mb-4 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            <input id="emailInput" type="email" placeholder="Email Address"
+                class="w-full mb-4 px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+            <button onclick="submitRegistration()"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold transition">
+                Submit
+            </button>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        // Load on start
+        window.onload = () => {
+            const user = JSON.parse(localStorage.getItem("user"));
+            if (user) displayUser(user);
+        };
+
+        // Handle click on profile
+        function handleProfileClick() {
+            const user = JSON.parse(localStorage.getItem("user"));
+            document.getElementById("authModal").classList.remove("hidden");
+
+            if (user) {
+                document.getElementById("nameInput").value = user.name;
+                document.getElementById("emailInput").value = user.email;
+            }
+        }
+
+        // Submit registration
+        function submitRegistration() {
+            const name = document.getElementById("nameInput").value.trim();
+            const email = document.getElementById("emailInput").value.trim();
+
+            if (name && email) {
+                const user = { name, email };
+                localStorage.setItem("user", JSON.stringify(user));
+                displayUser(user);
+                document.getElementById("authModal").classList.add("hidden");
+            } else {
+                alert("Please fill out all fields.");
+            }
+        }
+
+        // Show user profile
+        function displayUser(user) {
+            document.getElementById("profileName").textContent = user.name;
+            document.getElementById("profileEmail").textContent = user.email;
+            document.getElementById("logoutBtn").classList.remove("hidden");
+        }
+
+        // Logout
+        function logoutUser() {
+            localStorage.removeItem("user");
+            location.reload();
+            alert("Loging Out!");
+            window.location.href = "index.html"; // Change to your actual home page
+        }
+
+
+        function closeModal() {
+            document.getElementById("authModal").classList.add("hidden");
+        }
+
+
+    </script>
+
+
+
+
+</body>
+
+</html>
